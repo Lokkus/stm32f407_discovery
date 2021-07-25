@@ -23,9 +23,16 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+#include <string>
+#include <stdexcept>
+#include <sstream>
+#include <vector>
+#include <iomanip>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_ll_rcc.h"
@@ -36,6 +43,7 @@ extern "C" {
 #include "stm32f4xx_ll_utils.h"
 #include "stm32f4xx_ll_pwr.h"
 #include "stm32f4xx_ll_dma.h"
+#include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_ll_gpio.h"
 
 #if defined(USE_FULL_ASSERT)
