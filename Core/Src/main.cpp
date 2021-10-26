@@ -22,21 +22,29 @@
 #include "system.h"
 #include "logger.h"
 #include <string.h> // test
+#include <sstream>
+#include "logger_test.h"
+
 
 STM32F407::System stm_system;
 using STM32F407::Leds;
-Logger logger(USART1);
+Logger logger(USART1, DMA2_Stream7, DMA2_Stream5, DMA2);
+
+
+void tests()
+{
+
+    logger_test_receive_data_DMA_2();
+}
 
 
 
 int main(void)
 {
-    logger.sendData_IT("Some little long test text\n\r");
-    logger.receiveData_IT(10);
-    logger.sendData_IT(logger.getReceivedData_IT()+"\n\r");
+    tests();
     while (1)
     {
-        GPIOD->ODR |=(1<<15);
+        GPIOD->ODR |= (1<<15);
     }
 }
 

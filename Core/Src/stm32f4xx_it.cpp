@@ -23,11 +23,13 @@
 #include "stm32f4xx_it.h"
 #include "logger.h"
 #include <string>
+#include <string.h>
 
 extern Logger logger;
 uint32_t counter;
 uint32_t rec_count;
 std::string s;
+char test[1024];
 
 /******************************************************************************/
 /*           Cortex-M4 Processor Interruption and Exception Handlers          */
@@ -122,35 +124,28 @@ void SysTick_Handler(void)
   * @brief This function handles USART1 global interrupt.
   */
 
-
-void USART1_IRQHandler(void)
+extern "C"
 {
-    if (logger.getUSARTinstance()->SR & USART_SR_TXE and logger.getUSARTinstance()->CR1 & USART_CR1_TXEIE)
+    void USART1_IRQHandler(void)
     {
-        try
-        {
-            logger.getUSARTinstance()->DR = logger.getDataToSend().at(counter++);
-            while(logger.getUSARTinstance()->SR & USART_SR_TXE);
-        }
-        catch(std::out_of_range& oor)
-        {
-            while(!(logger.getUSARTinstance()->SR & USART_SR_TXE));
-            counter = 0;
-            logger.getDataToSend().clear();
-            logger.clearFlagTransferStatus();
-            logger.disableTransmission();
-        }
+        //send data
+        logger.USART_send_IRQ_handler();
+
+        // receive data
+        logger.USART_receive_IRQ_handler();
+
+        // detect idle line
+        logger.USART_idle_IRQ_handler();
+}
+
+    void DMA2_Stream7_IRQHandler(void)
+    {
+        logger.DMA_send_IRQ_handler();
     }
 
-    // receive data
-    if (logger.getUSARTinstance()->SR & USART_SR_RXNE)
+    void DMA2_Stream5_IRQHandler(void)
     {
-        GPIOD->ODR |=(1<<12);
-        char c = logger.getUSARTinstance()->DR;
-        logger.getReceivedData_IT().append(1, c);
-        logger.getReceivedDataCounter()++;
-        while(logger.getUSARTinstance()->SR & USART_SR_RXNE);
-
+        logger.DMA_receive_IRQ_Handler();
     }
 }
 

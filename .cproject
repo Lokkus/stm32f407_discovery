@@ -116,6 +116,8 @@
                                     <listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
                                     									
                                     <listOptionValue builtIn="false" value="../User/inc"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="../User/tests/inc"/>
                                     								
                                 </option>
                                 								
@@ -172,6 +174,8 @@
                                     <listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
                                     									
                                     <listOptionValue builtIn="false" value="../User/inc"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="../User/tests/inc"/>
                                     								
                                 </option>
                                 								
@@ -352,6 +356,8 @@
                                     <listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/stm32f407_discovery/User/inc}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="../User/tests/inc"/>
                                     								
                                 </option>
                                 								

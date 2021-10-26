@@ -83,14 +83,46 @@ namespace STM32F407
         // set baudrate
         USART1->BRR = APB2_FREQ/BAUD;
 
+        USART1->CR3 |= USART_CR3_DMAT;      // DMA enable transmitter
+        USART1->CR3 |= USART_CR3_DMAR;      // DMA enable receiver
+        USART1->CR1 |= USART_CR1_IDLEIE;    // IDLE interrupt enable
+
         // interrrupts configuration
-        NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),1, 0));
+        NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
         NVIC_EnableIRQ(USART1_IRQn);
+
+        NVIC_SetPriority(DMA2_Stream7_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+        NVIC_EnableIRQ(DMA2_Stream7_IRQn);
+
+        NVIC_SetPriority(DMA2_Stream5_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+        NVIC_EnableIRQ(DMA2_Stream5_IRQn);
+    }
+
+    void System::USART1_DMA_Config()
+    {
+        //enable clock
+        RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+
+        // config DMA for TX
+        DMA2_Stream7->CR |= (4<<25);            // enable channel 4 (TX)
+        DMA2_Stream7->CR |= DMA_SxCR_DIR_0;     // Data transfer direction mem -> per
+        DMA2_Stream7->CR |= DMA_SxCR_TCIE;      // Transfer complete interrupt enable
+        DMA2_Stream7->CR |= DMA_SxCR_MINC;      // Memory increment mode
+        DMA2_Stream7->PAR |= (uint32_t)&(USART1->DR);
+
+
+        // config DMA for RX
+        DMA2_Stream5->CR |= (4<<25);            // enable channel 4 (TX)
+        DMA2_Stream5->CR |= DMA_SxCR_MINC;      // Memory increment mode
+        DMA2_Stream5->CR |= DMA_SxCR_TCIE;      // Transfer complete interrupt enable
+        //DMA2_Stream5->CR |= DMA_SxCR_HTIE;      // Half transfer complete interrupt enable
+
+        DMA2_Stream5->PAR = (uint32_t)&USART1->DR;
+
     }
 
     void System::GPIOD_Config()
     {
-
         // enable clock for GPIOD
         RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 
@@ -116,6 +148,7 @@ namespace STM32F407
     {
         GPIOD_Config();
         USART1_Config();
+        USART1_DMA_Config();
     }
 
     System::System()

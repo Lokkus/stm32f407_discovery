@@ -35,6 +35,7 @@ namespace STM32F407
         void Clock_Config();
         void USART1_Config();
         void GPIOD_Config();
+        void USART1_DMA_Config();
 
     public:
         System();
